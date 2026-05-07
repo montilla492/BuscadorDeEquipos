@@ -71,6 +71,8 @@ export default function App() {
               updatedAt: serverTimestamp()
             }, { merge: true });
           }
+        }, (error) => {
+          console.error("Profile sync error:", error);
         });
       } else {
         setUserProfile(null);
@@ -302,7 +304,7 @@ export default function App() {
           </button>
           <div className="w-8 h-8 bg-neon-green rounded-sm flex items-center justify-center text-black font-black italic shadow-[0_0_15px_rgba(0,255,65,0.2)] shrink-0">GM</div>
           <h1 className="text-sm md:text-xl font-bold tracking-tighter font-display uppercase truncate">
-            GAMERMATCH <span className="hidden sm:inline text-neon-green/40 text-[10px] font-mono ml-2 tracking-normal">v4.0.2_EXP</span>
+            GAMERMATCH <span className="hidden sm:inline text-neon-green/40 text-[10px] font-mono ml-2 tracking-normal">v4.0.3_FIX</span>
           </h1>
         </div>
         
