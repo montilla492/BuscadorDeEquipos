@@ -1,0 +1,31 @@
+import { initializeApp } from "firebase/app";
+import { getAuth, GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { getFirestore, doc, getDocFromServer } from "firebase/firestore";
+import firebaseConfig from "../../firebase-applet-config.json";
+
+const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
+export const db = getFirestore(app, firebaseConfig.firestoreDatabaseId);
+export const googleProvider = new GoogleAuthProvider();
+
+export async function loginWithGoogle() {
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+    return result.user;
+  } catch (error) {
+    console.error("Login Error:", error);
+    throw error;
+  }
+}
+
+async function testConnection() {
+  try {
+    await getDocFromServer(doc(db, "test", "connection"));
+    console.log("Firestore connection verified.");
+  } catch (error: any) {
+    if (error.message?.includes("offline")) {
+      console.error("Firestore is offline. Check configuration.");
+    }
+  }
+}
+testConnection();

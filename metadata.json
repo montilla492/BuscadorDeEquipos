@@ -1,0 +1,6 @@
+{
+  "name": "GamerMatch – Buscador de Squads",
+  "description": "Aplicación de emparejamiento para jugadores basada en rango, horario y estilo de juego. Incluye squads en tiempo real, reputación y notificaciones.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["REACTIVE_UI", "REALTIME_DATA", "IDENTIFICATION"]
+}

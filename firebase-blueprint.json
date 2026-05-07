@@ -1,0 +1,138 @@
+{
+  "entities": {
+    "User": {
+      "title": "Player Profile",
+      "description": "Detailed player profile including game stats, rank, and reputation.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "displayName": { "type": "string" },
+        "photoURL": { "type": "string" },
+        "reputation": { "type": "integer" },
+        "bio": { "type": "string" },
+        "games": {
+          "type": "object",
+          "description": "Map of game ID to game-specific profile data.",
+          "properties": {
+            "valorant": { "$ref": "GameProfile" },
+            "lol": { "$ref": "GameProfile" },
+            "minecraft": { "$ref": "GameProfile" }
+          }
+        },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "displayName", "reputation"]
+    },
+    "GameProfile": {
+      "title": "Specific Game Data",
+      "description": "Preferences and ranking for a specific game.",
+      "type": "object",
+      "properties": {
+        "rank": { "type": "string" },
+        "role": { "type": "string" },
+        "vibe": { "type": "string", "enum": ["competitive", "chill"] },
+        "availability": {
+          "type": "object",
+          "properties": {
+            "from": { "type": "string" },
+            "to": { "type": "string" }
+          }
+        }
+      }
+    },
+    "Squad": {
+      "title": "Gaming Squad",
+      "description": "A group of players looking for a match or playing together.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "leaderId": { "type": "string" },
+        "gameId": { "type": "string" },
+        "title": { "type": "string" },
+        "description": { "type": "string" },
+        "rankLimit": { "type": "string" },
+        "vibe": { "type": "string" },
+        "maxMembers": { "type": "integer" },
+        "memberIds": { "type": "array", "items": { "type": "string" } },
+        "members": { "type": "array", "items": { "$ref": "SquadMember" } },
+        "status": { "type": "string", "enum": ["searching", "in-game", "closed"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["leaderId", "gameId", "title", "maxMembers", "status"]
+    },
+    "SquadMember": {
+      "title": "Member of a squad",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string" },
+        "displayName": { "type": "string" },
+        "role": { "type": "string" },
+        "status": { "type": "string" }
+      }
+    },
+    "Invitation": {
+      "title": "Squad Invitation",
+      "description": "Invite from a leader to a player or request from a player to a leader.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "squadId": { "type": "string" },
+        "fromId": { "type": "string" },
+        "toId": { "type": "string" },
+        "type": { "type": "string", "enum": ["invite", "request"] },
+        "status": { "type": "string", "enum": ["pending", "accepted", "rejected"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["squadId", "fromId", "toId", "type", "status"]
+    },
+    "Notification": {
+      "title": "Real-time Notification",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "userId": { "type": "string" },
+        "message": { "type": "string" },
+        "type": { "type": "string" },
+        "read": { "type": "boolean" },
+        "relatedId": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      }
+    },
+    "Message": {
+      "title": "Squad Message",
+      "type": "object",
+      "properties": {
+        "squadId": { "type": "string" },
+        "senderId": { "type": "string" },
+        "senderName": { "type": "string" },
+        "senderPhoto": { "type": "string" },
+        "text": { "type": "string" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["squadId", "senderId", "text", "createdAt"]
+    }
+  },
+  "firestore": {
+    "users/{userId}": {
+      "schema": "User",
+      "description": "User profiles and stats."
+    },
+    "squads/{squadId}": {
+      "schema": "Squad",
+      "description": "Active and past squads."
+    },
+    "squads/{squadId}/messages/{msgId}": {
+      "schema": "Message",
+      "description": "Real-time chat within a squad."
+    },
+    "invitations/{invitationId}": {
+      "schema": "Invitation",
+      "description": "Squad join requests and invites."
+    },
+    "notifications/{notifId}": {
+      "schema": "Notification",
+      "description": "User notifications."
+    }
+  }
+}
