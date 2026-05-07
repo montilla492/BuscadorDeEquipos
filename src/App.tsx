@@ -336,9 +336,22 @@ export default function App() {
             <button 
               onClick={handleLogin}
               disabled={isLoggingIn}
-              className="px-4 md:px-6 py-2 border border-neon-green text-neon-green font-mono text-[10px] md:text-xs font-bold uppercase hover:bg-neon-green hover:text-black transition-all"
+              className="px-4 md:px-6 py-2 border border-neon-green text-neon-green font-mono text-[10px] md:text-xs font-bold uppercase hover:bg-neon-green hover:text-black transition-all flex items-center gap-2"
             >
-              {isLoggingIn ? "SICRONIZANDO..." : "Iniciar"}
+              {isLoggingIn ? (
+                <>
+                  <Loader2 size={14} className="animate-spin" />
+                  <span>SINC_AUTH...</span>
+                </>
+              ) : (
+                <>
+                  <div className="w-3 h-3 bg-white rounded-full flex items-center justify-center overflow-hidden">
+                    <div className="w-full h-full bg-blue-500 scale-150 rotate-45 transform translate-x-1 translate-y-1"></div>
+                    <div className="absolute text-[6px] text-white font-bold">G</div>
+                  </div>
+                  <span>Conectar_Google</span>
+                </>
+              )}
             </button>
           )}
         </div>

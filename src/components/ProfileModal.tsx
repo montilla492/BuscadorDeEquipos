@@ -154,6 +154,17 @@ export const ProfileModal: React.FC<ProfileModalProps> = ({ user, profile, onClo
                <span className="text-xs font-black italic">{profile?.reputation ?? 0} REP</span>
             </div>
 
+            <div className="w-full py-1 px-2 bg-blue-500/10 border border-blue-500/20 rounded-sm flex items-center gap-2">
+              <div className="w-4 h-4 bg-white rounded-full flex items-center justify-center overflow-hidden shrink-0">
+                <div className="w-full h-full bg-blue-500 scale-150 rotate-45 transform translate-x-1 translate-y-1"></div>
+                <div className="absolute text-[8px] text-white font-bold">G</div>
+              </div>
+              <div className="flex flex-col items-start overflow-hidden">
+                <span className="text-[7px] font-mono text-blue-400 uppercase leading-none">Net_Conectada</span>
+                <span className="text-[9px] font-bold text-white/70 truncate w-full text-left">{user.email}</span>
+              </div>
+            </div>
+
             <button 
               onClick={handleLogout}
               className="w-full flex items-center justify-center gap-2 py-1.5 border border-red-500/30 text-red-500 font-mono text-[8px] font-black uppercase hover:bg-red-500 hover:text-white transition-all group/logout"
