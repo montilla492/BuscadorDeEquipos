@@ -21,6 +21,7 @@ import { db, auth, loginWithGoogle } from './lib/firebase';
 import { SquadCard } from './components/SquadCard';
 import { CreateSquadModal } from './components/CreateSquadModal';
 import { ProfileModal } from './components/ProfileModal';
+import { AuthModal } from './components/AuthModal';
 import { Squad, SquadStatus, UserProfile } from './types';
 import { 
   LayoutDashboard, 
@@ -30,7 +31,8 @@ import {
   Gamepad2, 
   Plus,
   Loader2,
-  Trophy
+  Trophy,
+  LogIn
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -39,7 +41,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [user, setUser] = useState(auth.currentUser);
   const [userProfile, setUserProfile] = useState<UserProfile | null>(null);
-  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isCreating, setIsCreating] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -51,6 +53,7 @@ export default function App() {
     const authUnsubscribe = auth.onAuthStateChanged(async (u) => {
       setUser(u);
       if (u) {
+        setIsAuthOpen(false);
         // Real-time profile listener
         const userDocRef = doc(db, 'users', u.uid);
         unsubscribeProfile = onSnapshot(userDocRef, (snapshot) => {
@@ -66,7 +69,7 @@ export default function App() {
               games: {},
               createdAt: serverTimestamp(),
               updatedAt: serverTimestamp()
-            });
+            }, { merge: true });
           }
         });
       } else {
@@ -83,10 +86,6 @@ export default function App() {
 
   const [topPlayers, setTopPlayers] = useState<UserProfile[]>([]);
   useEffect(() => {
-    if (!user) {
-      setTopPlayers([]);
-      return;
-    }
     const q = query(
       collection(db, 'users'),
       orderBy('reputation', 'desc'),
@@ -98,7 +97,7 @@ export default function App() {
       console.warn("Ranking sync limited:", error.message);
     });
     return () => unsubscribe();
-  }, [user]);
+  }, []);
 
   useEffect(() => {
     let q = query(
@@ -130,19 +129,9 @@ export default function App() {
     return () => unsubscribe();
   }, [filterGame]);
 
-  const handleLogin = async () => {
-    setIsLoggingIn(true);
-    try {
-      await loginWithGoogle();
-    } catch (err) {
-      console.error(err);
-    } finally {
-      setIsLoggingIn(false);
-    }
-  };
 
   const handleCreateSquad = async (data: any) => {
-    if (!user) return;
+    if (!user) return setIsAuthOpen(true);
     try {
       await addDoc(collection(db, 'squads'), {
         ...data,
@@ -295,6 +284,11 @@ export default function App() {
             onClose={() => setIsProfileOpen(false)} 
           />
         )}
+        {isAuthOpen && (
+          <AuthModal 
+            onClose={() => setIsAuthOpen(false)} 
+          />
+        )}
       </AnimatePresence>
 
       {/* Navegación Superior */}
@@ -334,24 +328,11 @@ export default function App() {
             </div>
           ) : (
             <button 
-              onClick={handleLogin}
-              disabled={isLoggingIn}
+              onClick={() => setIsAuthOpen(true)}
               className="px-4 md:px-6 py-2 border border-neon-green text-neon-green font-mono text-[10px] md:text-xs font-bold uppercase hover:bg-neon-green hover:text-black transition-all flex items-center gap-2"
             >
-              {isLoggingIn ? (
-                <>
-                  <Loader2 size={14} className="animate-spin" />
-                  <span>SINC_AUTH...</span>
-                </>
-              ) : (
-                <>
-                  <div className="w-3 h-3 bg-white rounded-full flex items-center justify-center overflow-hidden">
-                    <div className="w-full h-full bg-blue-500 scale-150 rotate-45 transform translate-x-1 translate-y-1"></div>
-                    <div className="absolute text-[6px] text-white font-bold">G</div>
-                  </div>
-                  <span>Conectar_Google</span>
-                </>
-              )}
+              <LogIn size={14} />
+              <span>Conectar_Sistema</span>
             </button>
           )}
         </div>
